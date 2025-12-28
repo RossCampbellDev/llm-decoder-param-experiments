@@ -1,0 +1,48 @@
+{
+  "prompt": "write a haiku about a random historical figure",
+  "max_batch_size": 1,
+  "temperature": 0,
+  "top_p": 1,
+  "top_k": 1,
+  "seed": 42,
+  "output": "* * *Cleopatras grace,Serpents kiss, a final plea,Egypts fading light.",
+  "error": null,
+  "instructions_per_sec": 1.0834414156148395,
+  "prompt_size": 13,
+  "output_size": 30,
+  "output_tokens_per_second": 33.15630933069322,
+  "latency_ms": 922.9848384857178,
+  "first_token_latency_ms": 48.33984375
+}
+{
+  "prompt": "write a haiku about a random historical figure",
+  "max_batch_size": 1,
+  "temperature": 0.2,
+  "top_p": 0.9,
+  "top_k": 50,
+  "seed": 42,
+  "output": "* * *Cleopatras grace,Serpents kiss, a final plea,Egypts fading light.",
+  "error": null,
+  "instructions_per_sec": 1.0646992734474514,
+  "prompt_size": 13,
+  "output_size": 30,
+  "output_tokens_per_second": 32.57762450678845,
+  "latency_ms": 939.232349395752,
+  "first_token_latency_ms": 49.05080795288086
+}
+{
+  "prompt": "write a haiku about a random historical figure",
+  "max_batch_size": 1,
+  "temperature": 0.9,
+  "top_p": 0.95,
+  "top_k": 100,
+  "seed": 42,
+  "output": "Cleopatra’s gaze,Golden serpent, empire’s end,Lost in Nile’s dark flow.",
+  "error": null,
+  "instructions_per_sec": 1.0501885645408524,
+  "prompt_size": 13,
+  "output_size": 30,
+  "output_tokens_per_second": 32.074535072140456,
+  "latency_ms": 952.2099494934082,
+  "first_token_latency_ms": 48.065900802612305
+}

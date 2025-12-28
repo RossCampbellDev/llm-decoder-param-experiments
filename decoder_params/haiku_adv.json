@@ -1,0 +1,48 @@
+{
+  "prompt": "write a haiku about one historical figure by sampling from this list: [marc anthony, julius caesar, marcus aurelius, scipio africanus]",
+  "max_batch_size": 1,
+  "temperature": 0,
+  "top_p": 1,
+  "top_k": 1,
+  "seed": 42,
+  "output": "*   **Julius Caesar:**    Empires boldest hand,    Crossing Rubicon, a storm,    Romes fate in his grasp.",
+  "error": null,
+  "instructions_per_sec": 0.8105630705320418,
+  "prompt_size": 37,
+  "output_size": 40,
+  "output_tokens_per_second": 33.06778945257516,
+  "latency_ms": 1233.7102890014648,
+  "first_token_latency_ms": 54.31485176086426
+}
+{
+  "prompt": "write a haiku about one historical figure by sampling from this list: [marc anthony, julius caesar, marcus aurelius, scipio africanus]",
+  "max_batch_size": 1,
+  "temperature": 0.2,
+  "top_p": 0.9,
+  "top_k": 50,
+  "seed": 42,
+  "output": "*   **Julius Caesar**A leader bold and bright,Empires rise beneath his hand,Fates cruel, final fall.",
+  "error": null,
+  "instructions_per_sec": 0.800633741383885,
+  "prompt_size": 37,
+  "output_size": 40,
+  "output_tokens_per_second": 32.56602151599425,
+  "latency_ms": 1249.0105628967285,
+  "first_token_latency_ms": 51.44333839416504
+}
+{
+  "prompt": "write a haiku about one historical figure by sampling from this list: [marc anthony, julius caesar, marcus aurelius, scipio africanus]",
+  "max_batch_size": 1,
+  "temperature": 0.9,
+  "top_p": 0.95,
+  "top_k": 100,
+  "seed": 42,
+  "output": "* * *Quiet strength he bore,Marcus Aurelius, wise sage,Peace within his soul.",
+  "error": null,
+  "instructions_per_sec": 1.037940226499064,
+  "prompt_size": 37,
+  "output_size": 30,
+  "output_tokens_per_second": 31.95919642474752,
+  "latency_ms": 963.4466171264648,
+  "first_token_latency_ms": 56.03957176208496
+}

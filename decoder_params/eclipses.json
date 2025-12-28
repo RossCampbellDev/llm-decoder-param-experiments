@@ -1,0 +1,48 @@
+{
+  "prompt": "why do eclipses happen?",
+  "max_batch_size": 1,
+  "temperature": 0,
+  "top_p": 1,
+  "top_k": 1,
+  "seed": 42,
+  "output": "Eclipses are a beautiful and fascinating phenomenon that occur when one celestial body blocks the light from another. There are two main types of eclipses: olar eclipses and lunar eclipses. Heres a breakdown of why they happen:**1. Solar Eclipses:*** **The Players:** The sun, the moon, and the Earth.* **The Alignment:** A solar eclipse happens when the moon passes directly between the sun and the Earth, casting a shadow on our planet.  This alignment needs to be *very* precise.* **Why it happens:**    * **New Moon:** Solar eclipses only occur during the new moon phase. During this phase, the moon is between the Earth and the sun, and the side of the moon facing us is not illuminated by the sun.    * **Orbital Plane Tilt:** The moons orbit around the Earth is tilted by about 5 degrees relative to the Earths orbit around the sun (the ecliptic).  This tilt means that most of the time, the moon passes *above* or *below* the sun during a new moon.    * **Perfect Alignment:**  Only when the moons orbit is aligned almost perfectly with the Earth",
+  "error": null,
+  "instructions_per_sec": 0.12653669930346806,
+  "prompt_size": 10,
+  "output_size": 260,
+  "output_tokens_per_second": 32.980473957752864,
+  "latency_ms": 7902.845621109009,
+  "first_token_latency_ms": 49.714088439941406
+}
+{
+  "prompt": "why do eclipses happen?",
+  "max_batch_size": 1,
+  "temperature": 0.2,
+  "top_p": 0.9,
+  "top_k": 50,
+  "seed": 42,
+  "output": "Eclipses are a beautiful and fascinating phenomenon that occur when one celestial body blocks the light from another. There are two main types of eclipses: solar eclipses and lunar eclipses. Heres a breakdown of why they happen:**1. Solar Eclipses:*** **The Players:** The sun, the moon, and the Earth.* **The Alignment:** A solar eclipse happens when the moon passes directly between the sun and the Earth, casting a shadow on our planet.  This alignment needs to be *very* precise.* **Why its Rare:** The moons orbit is tilted about 5 degrees relative to the Earths orbit around the sun.  This means that most of the time, the moon passes *above* or *below* the sun as seen from Earth.* **Types of Solar Eclipses:**    * **Total Solar Eclipse:** The moon completely blocks the suns disk, revealing the suns corona (its outer atmosphere). This is the most dramatic type.    * **Partial Solar Eclipse:** The moon only partially covers the suns disk.    * **Annular Solar Eclipse:** The moon is too far from Earth in its orbit to",
+  "error": null,
+  "instructions_per_sec": 0.1247265819174195,
+  "prompt_size": 10,
+  "output_size": 260,
+  "output_tokens_per_second": 32.50136858372505,
+  "latency_ms": 8017.5371170043945,
+  "first_token_latency_ms": 48.64192008972168
+}
+{
+  "prompt": "why do eclipses happen?",
+  "max_batch_size": 1,
+  "temperature": 0.9,
+  "top_p": 0.95,
+  "top_k": 100,
+  "seed": 42,
+  "output": "Eclipses are a fascinating and dramatic display of celestial mechanics. They happen when one celestial body blocks the light from another. There are two main types:**1. Solar Eclipses (Sun-Blocked)***   **What happens:** During a solar eclipse, the Moon passes between the Sun and the Earth, casting a shadow on Earth and blocking the Sun’s light.*   **Why it happens:** The Moons orbit around the Earth is tilted about 5 degrees relative to the Earths orbit around the Sun (the ecliptic).  This tilt is the reason why we dont have a solar eclipse every month during the new moon.  For a solar eclipse to occur, the Moon must be in the *new moon* phase (when the Moon is between the Earth and the Sun) *and* align with the ecliptic.*   **Types of Solar Eclipses:**    *   **Total Solar Eclipse:** The Moon completely blocks the Suns disk, revealing the Suns corona (its outer atmosphere).  This is the most spectacular type.    *   **Partial Solar Eclipse:** The Moon only partially blocks the Suns disk.    *   **Annular Solar",
+  "error": null,
+  "instructions_per_sec": 0.12269918047042101,
+  "prompt_size": 10,
+  "output_size": 260,
+  "output_tokens_per_second": 31.970048722386693,
+  "latency_ms": 8150.01368522644,
+  "first_token_latency_ms": 48.681020736694336
+}
