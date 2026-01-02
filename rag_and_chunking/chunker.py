@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import re
 
@@ -54,18 +54,6 @@ def structure_aware(text: str) -> List[Chunk]:
         chunks.append(
             Chunk(txt=' '.join(current_chunk_lines), meta={})
         )
-
-    return chunks
-
-
-def semantic_chunker(text: str):
-    chunks: List[Chunk] = []
-
-    # Split text into sentences
-    # Embed each sentence
-    # Accumulate sentences into a chunk while:
-    # cosine(avg_chunk_embedding, next_sentence_embedding) > threshold
-    # Cut when similarity drops
 
     return chunks
 

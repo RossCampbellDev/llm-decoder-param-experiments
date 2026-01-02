@@ -23,6 +23,12 @@ chunks.  similarity can also be used, however we have implemented it ourselves.
 information about markdown documents) create a query use the `best_match()`
 function from the embedder to select the most ideal chunk for the query.
 
+**semantic_chunker.py** make use of chunking and embedding, and implement a 
+very simple function to split the test doc into sentences and then embed.
+as we go through the doc, we measure the similarity of the next sentence up
+with our current "sentence" chunk.  if it's a close match, we include it in
+the current chunk.  if not, we start a fresh chunk and carry on
+
 # Flaws
 **semantic collision** one of the most obvious flaws with chunking and then
 comparing with a query is `semantic collision`. this is where our sentence model
@@ -155,3 +161,40 @@ choice to the human eye is missed by the model, however it *has* selected far
 better near-misses. This clearly implies to me that rather than getting close in
 terms of meaning, the model is working purely based on numeric nearness of the
 embedded vectors.  it is somewhat effective, but heavily flawed.
+
+## semantic chunker vs all
+The new semantic chunker seems to be radically more effective.  For our test
+prompt with "what is markdown not a replacement for?" it finds the correct
+match with a high similarity score:
+
+0.80749995  Markdown is not a replacement for HTML, or even close to it.
+0.7990001   The idea for Markdown is to make it easy to read, write, and edit prose.
+0.72266996  This means it's also easy to use Markdown to write about Markdown's own syntax.
+0.7101925   HTML is a *publishing* format; Markdown is a *writing* format.
+0.695018    Thus, Markdown's formatting syntax only addresses issues that can be conveyed in plain text.
+
+this approach to chunking appears to produce much more salient chunks at least
+in the instance of this prompt.  Now to try another:
+
+**prompt:** "are there any known bugs in markdown?"
+this prompt should result in a high similarity match with a line in the test doc
+that explicitly states that there are known bugs in markdown... yet it does not
+rank this within the top 5 matches.  Worth noting is that the top match is a
+very vague statement about markdown being easy to read and write.
+
+**prompt:** "what type of lists does markdown support?"
+this question is fairly specific, but there are numerous places in the doc that
+would likely have highly related chunks.  the output does seem to corrobrate this
+as matches 3 and 4 do mention the lists (the latter being the chunk I expected).
+however, it ranks the aforementioned "easy to read and write" chunk in 2nd, and
+an even more vague (but at least related) "markdown lists look like, well, lists"
+
+## Analysis
+from the looks of it, the sentence model and similarity test we are using here is
+good at matching paraphrases and/or more general/common sentences, but do not do
+well when asking for it to establish if a fact is true or not.  again this shows
+that the 'meaning' similarity does not necessarily correlate with the symbol
+similarity.
+our third test also demonstrated that a neighbourhood of matching vectors can be
+quite flat and result in very general answers ranking similarly to the few rare
+closer matches
