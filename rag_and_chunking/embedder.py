@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 from sentence_transformers import SentenceTransformer
-from typing import List, Union
+from typing import cast, List, Union, Tuple
 from chunker import Chunk
-from typing import cast
 import numpy as np
 
 # use a sentence embedding model, not our main generation model
@@ -31,7 +30,7 @@ def embed(sentences: Union[str, Chunk, List[str], List[Chunk]]) -> np.ndarray:
     return result
 
 
-def best_match(query: str, sentences: Union[List[str], List[Chunk]]) -> int:
+def best_match(query: str, sentences: Union[List[str], List[Chunk]]) -> List[Tuple[int, float]]:
     """
     takes a query string and a list of chunks or strings, embeds them into vectors,
     then uses the model's similarity function to pick the highest probability answer
@@ -42,20 +41,9 @@ def best_match(query: str, sentences: Union[List[str], List[Chunk]]) -> int:
             sentences = [c.txt for c in chunks]
         sentences = cast(list[str], sentences)
 
-    # using the model itself
-    # result = model.similarity(
-    #     embed(query),
-    #     embed(sentences)
-    # )
+    result = my_similarity(query, sentences)
 
-    # implement ourselves
-    result = my_similarity(
-        query,
-        sentences
-    )
-    idx = result.argmax()
-    return int(idx)
-
+    return list(enumerate(result))
 
 def my_similarity(query: str, sentences: List[str]) -> np.ndarray:
     """
@@ -65,8 +53,10 @@ def my_similarity(query: str, sentences: List[str]) -> np.ndarray:
     which essentially simplifies the procedure to dotproduct
     """
     q = embed(query)
+    # shape is not necessarily always `d` for query, so check it:
+    if q.ndim == 2:
+        q = q[0]
     x = embed(sentences)
     scores = x @ q
-    print(f"scores:\n{scores}")
 
     return scores

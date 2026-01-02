@@ -34,7 +34,7 @@ def structure_aware(text: str) -> List[Chunk]:
 
     md_re = [
             re.compile(r"<h[0-9][\sA-z]*>.*"), # HTML headers
-            re.compile(r".*:.*"), # paragraph breaks
+            re.compile(r".*:.*"), # paragraph breaks (this is very aggressive and likely flawed)
             re.compile(r"#{1,4}\s.*"), # markdown headers
     ]
     current_chunk_lines: List[str] = []

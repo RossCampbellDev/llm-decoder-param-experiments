@@ -19,3 +19,18 @@ makes use of a simple sentence model to handle the encoding of chunks.  similari
 read a test document (in this case a markdown file full of information about markdown documents)
 create a query
 use the `best_match()` function from the embedder to select the most ideal chunk for the query.
+
+# Flaws
+**semantic collision**
+one of the most obvious flaws with chunking and then comparing with a query is `semantic collision`.
+this is where our sentence model may present a "best match" because it has found similar tokens, but the meaning in the chunk is not relevant.
+
+we can see an example of this in when querying against our test doc
+
+**chunking strategy weaknesses**
+using something like structure-aware chunking seems logical for our markdown-formatted test doc, as the structure of the document
+implies something about the meaning of the document - however this can (and in our case does) result in a large variance in the amount
+of data/information in chunks.  sometimes a chunk is one sentence, sometimes it is multiple paragraphs.  this heavily limits the accuracy
+of the results - for example querying "what restrictions are at block level?" should get a near perfect match in our 'Inline HTML' section,
+but because the chunk is so big it seems likely that the model is failing to pick up on that - and is instead returning much less appropriate
+responses.
