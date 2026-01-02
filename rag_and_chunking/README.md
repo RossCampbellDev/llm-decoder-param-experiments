@@ -154,4 +154,4 @@ answers are much 'better' at first glance.  Strangely, again, the most obvious
 choice to the human eye is missed by the model, however it *has* selected far
 better near-misses. This clearly implies to me that rather than getting close in
 terms of meaning, the model is working purely based on numeric nearness of the
-tokens.  it is somewhat effective, but heavily flawed.
+embedded vectors.  it is somewhat effective, but heavily flawed.
