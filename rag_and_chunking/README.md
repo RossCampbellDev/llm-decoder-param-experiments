@@ -25,7 +25,8 @@ use the `best_match()` function from the embedder to select the most ideal chunk
 one of the most obvious flaws with chunking and then comparing with a query is `semantic collision`.
 this is where our sentence model may present a "best match" because it has found similar tokens, but the meaning in the chunk is not relevant.
 
-we can see an example of this in when querying against our test doc
+we can see an example of this in when querying against our test doc.  if we query with "please block that quote" - as though looking to have
+something removed from a document, our model's best matches talking about block quotes in markdown formatting. 
 
 **chunking strategy weaknesses**
 using something like structure-aware chunking seems logical for our markdown-formatted test doc, as the structure of the document
