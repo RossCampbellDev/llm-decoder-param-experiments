@@ -20,7 +20,7 @@ def fixed_chunks(txt: str, chunk_size: int, overlap: int=0) -> List[Chunk]:
     while (i + chunk_size) <= len(txt):
         chunks.append(
             Chunk(
-                txt=txt[i:i+chunk_size],
+                txt=txt[i:i+chunk_size].replace("\n", ""),
                 meta={}
             )
         )
@@ -60,6 +60,12 @@ def structure_aware(text: str) -> List[Chunk]:
 
 def semantic_chunker(text: str):
     chunks: List[Chunk] = []
+
+    # Split text into sentences
+    # Embed each sentence
+    # Accumulate sentences into a chunk while:
+    # cosine(avg_chunk_embedding, next_sentence_embedding) > threshold
+    # Cut when similarity drops
 
     return chunks
 
