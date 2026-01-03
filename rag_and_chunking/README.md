@@ -198,3 +198,65 @@ similarity.
 our third test also demonstrated that a neighbourhood of matching vectors can be
 quite flat and result in very general answers ranking similarly to the few rare
 closer matches
+
+# BM25 best matching with sparse vectors for a hybrid approach
+to improve the quality of our results, it is common to combine our dense chunking
+approach with a best-match 25 approach.
+bm25 scores query-to-chunk relevance across a document or collection of docs.  it 
+does this using statistics across all chunks.
+first we tokenize our chunks, then we look at the frequency of terms within chunks.
+we look at the frequency that "chunks containing the search term" occur within the
+doc(s), and also look at an inverse of this.  "how much does a given chunk talk
+about this specific term?" and "how rare is this term across all chunks?"
+
+ultimately we use these values in our bm25 function in combination with two 
+parameters that control saturation - `k1` and `b`. `k1` is used to control the
+term frequency, and `b` is used to normalise chunk lengths.
+
+bm25:
+```
+BM25(q, d) =
+Σ IDF(t) *
+  ( TF(t,d) * (k1 + 1) ) /
+  ( TF(t,d) + k1 * (1 - b + b * |d| / avgdl) )
+```
+
+description of bm25 equation:
+```
+sum over all query terms (tokens).  this is done independently per term
+order/structure do not matter as a result
+
+term_frequency(t, d) = number of times t occurs in chunk d
+    this has limitations - eg longer chunks are more likely to score higher.
+    repeated words may also affect the score (unless accounted for like we
+    did)
+
+term_frequency(t, d) * (k1 + 1) numerator
+term_frequency(t, d) + k1 * (...) denominator 
+    these two ask "how impressed should i be by term repetition?"
+    they allow TF to grow quickly at first but then flatten out
+
+(...)
+    1 - b + b * |d| / avgdl
+        |d| = average number of tokens in THIS chunk
+        avgdl = average chunk length across document(s)
+        this is a normalisation that ensures long chunks don't just
+        automatically score higher all the time
+
+        b = 0 => ignore length entirely
+        b = 1 => fully normalize score by length
+        b = 0.75 => our test value which is balanced
+        this helps us when chunk sizes are high variance
+
+IDF(t)
+    log((N - df + 0.5) / (df + 0.5) + 1)
+        N = number of chunks
+        df = number of chunks containing term t
+        rare term = high IDF = strong signal
+        common term = low IDF = weak
+        "is this term discriminative?" and therefore important
+```
+
+when we combine bm25 and our dense embeddings, we are effectively combining:
+"where is this explicitly mentioned?" (sparse)
+"what is this about?" (dense)
