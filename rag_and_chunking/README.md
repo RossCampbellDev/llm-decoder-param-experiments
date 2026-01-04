@@ -260,3 +260,71 @@ IDF(t)
 when we combine bm25 and our dense embeddings, we are effectively combining:
 "where is this explicitly mentioned?" (sparse)
 "what is this about?" (dense)
+
+## hybrid scoring test
+**query:** "what type of lists does markdown support?"
+
+**semantic chunk dense vector top 5**
+0.861827   `Markdown lists look like, well, lists.`
+0.6642482  `The idea for Markdown is to make it easy to read, write, and edit prose.`
+0.65726805 `At some point in the future, Markdown may support starting ordered lists at an arbitrary number.`
+0.6386822  `<h3 id="list">Lists</h3>  Markdown supports ordered (numbered) and unordered (bulleted) lists.`
+0.6317893  `This means it's also easy to use Markdown to write about Markdown's own syntax.`
+
+**BM25 top-5:**
+10.500206354845922 `At some point in the future, Markdown may support starting ordered lists at an arbitrary number.`
+7.15102861310484   `Markdown lists look like, well, lists.`
+6.3583284784588034 `<h3 id="list">Lists</h3>  Markdown supports ordered (numbered) and unordered (bulleted) lists.`
+5.718807300800917  `What a great season.`
+5.718807300800917  `What a great season.`
+
+**hybrid scores top 5**
+0.8813225  `At some point in the future, Markdown may support starting ordered lists at an arbitrary number.`
+0.8405185  `Markdown lists look like, well, lists.`
+0.67331123 `<h3 id="list">Lists</h3>  Markdown supports ordered (numbered) and unordered (bulleted) lists.`
+0.55348444 `Blockquotes can contain other Markdown elements, including headers, lists, and code blocks:  	> ## This is a header.`
+0.5041493  `[1]: http://docutils.sourceforge.net/mirror/setext.html   [2]: http://www.aaronsw.com/2002/atx/   [3]: https://web.archi`
+
+---
+
+**query:** "known issues markdown"
+
+**semantic chunk dense vector top 5**
+0.5726969  `Markdown lists look like, well, lists.`
+0.56948507 `The idea for Markdown is to make it easy to read, write, and edit prose.`
+0.5640848  `[src]: /projects/markdown/syntax.text  * * *  <h2 id="overview">Overview</h2>  <h3 id="philosophy">Philosophy</h3>  Markdown is intended to be as easy-to-read and easy-to-write as is feasible.`
+0.56243205 `Markdown is not a replacement for HTML, or even close to it.`
+0.55363035 `Thus, Markdown's formatting syntax only addresses issues that can be conveyed in plain text.`
+
+**BM25 top-5:**
+7.0513037376018115 `Thus, Markdown's formatting syntax only addresses issues that can be conveyed in plain text.`
+4.028387461592194  `The following three link definitions are equivalent:  	[foo]: http://example.com/  "Optional Title Here" 	[foo]: http://`
+1.762926129404724  `This means it's also easy to use Markdown to write about Markdown's own syntax.`
+1.6812931968446019 `Markdown lists look like, well, lists.`
+1.6363255789224207 `Markdown: Syntax ================  <ul id="ProjectSubmenu">     <li><a href="/projects/markdown/" title="Markdown Projec`
+
+**hybrid scores top 5**
+0.98335373 `Thus, Markdown's formatting syntax only addresses issues that can be conveyed in plain text.`
+0.6192186  `Markdown lists look like, well, lists.`
+0.59827137 `The following three link definitions are equivalent:  	[foo]: http://example.com/  "Optional Title Here" 	[foo]: http://`
+0.59649956 `[src]: /projects/markdown/syntax.text  * * *  <h2 id="overview">Overview</h2>  <h3 id="philosophy">Philosophy</h3>  Mark`
+0.59435177 `Markdown is not a replacement for HTML, or even close to it.`
+
+## Analysis
+In our first test case here, both independent sets of scores had quite high numbers.  in the case of the dense approach, this
+had actually resulted in a very poor choice whereas the bm25 sparse approach performed well.  Likely this is due to the size
+of chunks - the best match is a very short chunk so this shows a bias toward short sentences which chunking in this manner.
+The hybrid approach correctly combined the good match from bm25 and the third-best from dense to show us the most valid answer.
+
+In the second example, scores in the dense approach are much closer, in a flatter and broader neighbourhood.  again, it points
+toward the short sentence which is very generic and unhelpful, and it does not appear to find any reasonably viable answers.
+bm25 and hybrid once again find the right answer ("the following three..." is truncated but contains the right text), though 
+do not this time rank it at the top.  changing the query slightly to "known bug in markdown" - a direct quote - results in 
+bm25 and hybrid finding the answer at the top, but dense still misses
+
+ultimately, the failures of the dense scoring approach are most likely explained with the chunking method itself.  in the 
+case of our second test, this seems fairly obvious as the chunk containing the answer we want is quite large and most likely
+loses 'meaning' in the scoring system.  it clearly favours shorter sentences as it is now.
+dense ranking penalised the long chunk, and interpreted the dominant meaning of it as something other than what we humans
+were expecting.
+
