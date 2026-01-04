@@ -23,7 +23,7 @@ chunks.  similarity can also be used, however we have implemented it ourselves.
 information about markdown documents) create a query use the `best_match()`
 function from the embedder to select the most ideal chunk for the query.
 
-**semantic_chunker.py** make use of chunking and embedding, and implement a 
+**semantic_chunker.py** make use of chunking and embedding, and implement a
 very simple function to split the test doc into sentences and then embed.
 as we go through the doc, we measure the similarity of the next sentence up
 with our current "sentence" chunk.  if it's a close match, we include it in
@@ -167,11 +167,11 @@ The new semantic chunker seems to be radically more effective.  For our test
 prompt with "what is markdown not a replacement for?" it finds the correct
 match with a high similarity score:
 
-0.80749995  Markdown is not a replacement for HTML, or even close to it.
-0.7990001   The idea for Markdown is to make it easy to read, write, and edit prose.
-0.72266996  This means it's also easy to use Markdown to write about Markdown's own syntax.
-0.7101925   HTML is a *publishing* format; Markdown is a *writing* format.
-0.695018    Thus, Markdown's formatting syntax only addresses issues that can be conveyed in plain text.
+0.80749995  `Markdown is not a replacement for HTML, or even close to it.`
+0.7990001   `The idea for Markdown is to make it easy to read, write, and edit prose.`
+0.72266996  `This means it's also easy to use Markdown to write about Markdown's own syntax.`
+0.7101925   `HTML is a *publishing* format; Markdown is a *writing* format.`
+0.695018    `Thus, Markdown's formatting syntax only addresses issues that can be conveyed in plain text.`
 
 this approach to chunking appears to produce much more salient chunks at least
 in the instance of this prompt.  Now to try another:
@@ -202,14 +202,14 @@ closer matches
 # BM25 best matching with sparse vectors for a hybrid approach
 to improve the quality of our results, it is common to combine our dense chunking
 approach with a best-match 25 approach.
-bm25 scores query-to-chunk relevance across a document or collection of docs.  it 
+bm25 scores query-to-chunk relevance across a document or collection of docs.  it
 does this using statistics across all chunks.
 first we tokenize our chunks, then we look at the frequency of terms within chunks.
 we look at the frequency that "chunks containing the search term" occur within the
 doc(s), and also look at an inverse of this.  "how much does a given chunk talk
 about this specific term?" and "how rare is this term across all chunks?"
 
-ultimately we use these values in our bm25 function in combination with two 
+ultimately we use these values in our bm25 function in combination with two
 parameters that control saturation - `k1` and `b`. `k1` is used to control the
 term frequency, and `b` is used to normalise chunk lengths.
 
@@ -232,7 +232,7 @@ term_frequency(t, d) = number of times t occurs in chunk d
     did)
 
 term_frequency(t, d) * (k1 + 1) numerator
-term_frequency(t, d) + k1 * (...) denominator 
+term_frequency(t, d) + k1 * (...) denominator
     these two ask "how impressed should i be by term repetition?"
     they allow TF to grow quickly at first but then flatten out
 
@@ -311,20 +311,27 @@ when we combine bm25 and our dense embeddings, we are effectively combining:
 0.59435177 `Markdown is not a replacement for HTML, or even close to it.`
 
 ## Analysis
-In our first test case here, both independent sets of scores had quite high numbers.  in the case of the dense approach, this
-had actually resulted in a very poor choice whereas the bm25 sparse approach performed well.  Likely this is due to the size
-of chunks - the best match is a very short chunk so this shows a bias toward short sentences which chunking in this manner.
-The hybrid approach correctly combined the good match from bm25 and the third-best from dense to show us the most valid answer.
+In our first test case here, both independent sets of scores had quite high
+numbers.  in the case of the dense approach, this had actually resulted in a
+very poor choice whereas the bm25 sparse approach performed well.  Likely this
+is due to the size of chunks - the best match is a very short chunk so this
+shows a bias toward short sentences which chunking in this manner. The hybrid
+approach correctly combined the good match from bm25 and the third-best from
+dense to show us the most valid answer.
 
-In the second example, scores in the dense approach are much closer, in a flatter and broader neighbourhood.  again, it points
-toward the short sentence which is very generic and unhelpful, and it does not appear to find any reasonably viable answers.
-bm25 and hybrid once again find the right answer ("the following three..." is truncated but contains the right text), though 
-do not this time rank it at the top.  changing the query slightly to "known bug in markdown" - a direct quote - results in 
-bm25 and hybrid finding the answer at the top, but dense still misses
+In the second example, scores in the dense approach are much closer, in a
+flatter and broader neighbourhood.  again, it points toward the short sentence
+which is very generic and unhelpful, and it does not appear to find any
+reasonably viable answers. bm25 and hybrid once again find the right answer
+("the following three..." is truncated but contains the right text), though do
+not this time rank it at the top.  changing the query slightly to "known bug in
+markdown" - a direct quote - results in bm25 and hybrid finding the answer at
+the top, but dense still misses
 
-ultimately, the failures of the dense scoring approach are most likely explained with the chunking method itself.  in the 
-case of our second test, this seems fairly obvious as the chunk containing the answer we want is quite large and most likely
-loses 'meaning' in the scoring system.  it clearly favours shorter sentences as it is now.
-dense ranking penalised the long chunk, and interpreted the dominant meaning of it as something other than what we humans
-were expecting.
-
+ultimately, the failures of the dense scoring approach are most likely explained
+with the chunking method itself.  in the case of our second test, this seems
+fairly obvious as the chunk containing the answer we want is quite large and
+most likely loses 'meaning' in the scoring system.  it clearly favours shorter
+sentences as it is now. dense ranking penalised the long chunk, and interpreted
+the dominant meaning of it as something other than what we humans were
+expecting.
