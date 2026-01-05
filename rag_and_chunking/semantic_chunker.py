@@ -12,7 +12,7 @@ def sentence_split(text: str) -> List[str]:
     sentences: List[str] = []
     text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
     text = text.replace("\n", " ")
-    sentences = re.split(r"(?<=[.!?])\s+", text)
+    sentences = re.split(r"(?<=[.!?])\s+| {4}", text)
     sentences = [s.strip() for s in sentences if s.strip()]
     return sentences
 

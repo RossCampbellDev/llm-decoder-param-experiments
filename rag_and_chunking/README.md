@@ -335,3 +335,51 @@ most likely loses 'meaning' in the scoring system.  it clearly favours shorter
 sentences as it is now. dense ranking penalised the long chunk, and interpreted
 the dominant meaning of it as something other than what we humans were
 expecting.
+
+## Chunking a real document
+The document `sop1.txt` is copied from a google doc that was exported to HTML
+format.  unfortunately this results in some odd formatting - and our use of 4
+white spaces as a new additional separator for the sentence splitter (part of 
+the semantic chunker).
+Regardless, pressing on, we modify the files and can now run hybrid scoring
+in other python modules.  Next came a simple script to take a query and a file
+name (always `sop1.txt` in this case) and then do something with the scores
+that are returned.
+In this case, the top 3 (for brevity) are shown as usual.
+
+## Results
+**query:** "what is in the induction checklist?"
+1.0000	`A copy of the completed induction checklist should be stored in the staff training records folder for inspection.`
+0.7698	`Training records are kept in the Training Log.`
+0.6541  `📁 MASTER F&B / KITCHEN EHO COMPLIANCE FOLDER(Hotel – UK) SECTION 1 — TRAINING & PEOPLE 1.1 Induction Checklist (New Sta`
+
+**query:** "when must chemical spills be cleaned?"
+1.0000  `Chemical spills cleaned immediately`
+0.5946  `Surfaces must be cleaned and sanitised before preparation.`
+0.5748  `Bins must be cleaned daily with appropriate disinfectant. `
+
+As we can see, the chunking and scoring has worked fairly well here and given
+some relevant matches.  The top matches both have a perfect `1.0`, with the
+latter test having a larger gap before the second match.  clearly this simple
+approach is incredibly confident of its answers - likely due to sentences and
+chunks being quite small in general.
+
+In the first example, the second best match has nothing to do with our
+'induction checklist' however it does *appear* to contain a vaguely analogous
+meaning.  This may be coincidence, it is difficult to tell, and it likely does
+not seem to deserve the relatively high score.
+
+In the second example, the second best match seems similar:  it is vaguely
+related as it is about 'cleaning' but has nothing to do with 'chemical spills'.
+
+in both cases, we have near-best-matches that are in a similar neighbourhood
+semantically, but are not that relevant to our query.
+To improve the accuracy/relevance of our results we would need to add further
+complexity to our search:
+
+- contextual filtering before ranking (here is where we should use the `meta`
+attribute in our `Chunks`)
+- sentence-level re-ranking inside top chunks.  split a chunk into sentences
+and score the sentences vs the query, and only top sentences go to generator
+- as always, be extra aware of the query and how it can have a significant
+effect on the response
