@@ -2,7 +2,72 @@
 import argparse
 import os
 import subprocess
+from typing import Optional
 from modelreport import ModelReport
+
+
+def run_pixi_generate(
+    prompt: str,
+    out_file: Optional[str] = None,
+    max_batch_size: int = 1,
+    temperature: Optional[float] = 0.2,
+    top_p: Optional[float] = 0.9,
+    top_k: Optional[int] = 50,
+    seed: int = 42,
+) -> ModelReport:
+    report = ModelReport()
+    report.prompt = prompt
+
+    cmd = [
+        "pixi", "r",
+        "max", "generate",
+        "--model", "google/gemma-3-4B-it",
+        "--custom-architectures", "gemma3multimodal",
+        "--max-length", "5000",
+        "--max-new-tokens", "256",
+        "--prompt", f"<start_of_turn>{prompt}<end_of_turn>\n",
+    ]
+
+    debug = os.environ.get("DEBUG_MODE", "0").lower() in ("1", "true")
+
+    if debug:
+        cmd += [
+            "--temperature", "0.0",
+            "--top-p", "1.0",
+            "--top-k", "1",
+            "--seed", "42",
+        ]
+    else:
+        if max_batch_size is not None:
+            cmd += ["--max-batch-size", str(max_batch_size)]
+            report.max_batch_size = max_batch_size
+        if temperature is not None:
+            cmd += ["--temperature", str(temperature)]
+            report.temperature = temperature
+        if top_p is not None:
+            cmd += ["--top-p", str(top_p)]
+            report.top_p = top_p
+        if top_k is not None:
+            cmd += ["--top-k", str(top_k)]
+            report.top_k = top_k
+        if seed is not None:
+            cmd += ["--seed", str(seed)]
+            report.seed = seed
+
+    model_output = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    report.parse_stdout(model_output.stdout)
+    report.parse_error(model_output.stderr)
+
+    if out_file is not None:
+        with open(out_file, "w") as f:
+            f.write(str(report.as_json()))
+
+    return report
 
 
 def main():
@@ -16,56 +81,15 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
-    report = ModelReport()
-    report.prompt = args.prompt
-
-    with open(args.file, "w") as f:
-        cmd = [
-            "pixi", "r",
-            "max", "generate",
-            "--model", "google/gemma-3-4B-it",
-            "--custom-architectures", "gemma3multimodal",
-            "--max-length", "5000",
-            "--max-new-tokens", "256",
-            "--prompt", f"<start_of_turn>{args.prompt}<end_of_turn>\n",
-        ]
-
-        debug = os.environ.get("DEBUG_MODE", "0").lower() in ("1", "true")
-
-        if debug:
-            cmd += [
-                "--temperature", "0.0",
-                "--top-p", "1.0",
-                "--top-k", "1",
-                "--seed", "42",
-            ]
-        else:
-            if args.max_batch_size is not None:
-                cmd += ["--max-batch-size", str(args.max_batch_size)]
-                report.max_batch_size = args.max_batch_size
-            if args.temperature is not None:
-                cmd += ["--temperature", str(args.temperature)]
-                report.temperature = args.temperature
-            if args.top_p is not None:
-                cmd += ["--top-p", str(args.top_p)]
-                report.top_p = args.top_p
-            if args.top_k is not None:
-                cmd += ["--top-k", str(args.top_k)]
-                report.top_k = args.top_k
-            if args.seed is not None:
-                cmd += ["--seed", str(args.seed)]
-                report.seed = args.seed
-
-
-        model_output = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        report.parse_stdout(model_output.stdout)
-        report.parse_error(model_output.stderr)
-        f.write(str(report.as_json()))
+    run_pixi_generate(
+        prompt=args.prompt,
+        out_file=args.file,
+        max_batch_size=args.max_batch_size,
+        temperature=args.temperature,
+        top_p=args.top_p,
+        top_k=args.top_k,
+        seed=args.seed,
+    )
 
 if __name__ == "__main__":
     main()
