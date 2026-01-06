@@ -11,6 +11,18 @@ from chunker import Chunk
 from tester import build_chunks, get_hybrid, load_test_data
 from decoder_params.inference_tests import run_pixi_generate
 
+bad_prompt = "what are there restrictions on?" # vague, open-ended
+better_prompt = """
+Answer the question using ONLY the context below.
+If the answer is not explicitly stated, say "I don't know."
+
+CONTEXT:
+<rag_token>
+
+QUESTION:
+What restrictions are there?""" # convince the generator model to look at our context more specifically, with a better question
+
+
 def top_n(n: int, scores: List[Tuple[int, float]], chunks: List[Chunk]) -> str:
     """
     returns a concatenated string containing the top N highest-scoring matches
@@ -25,6 +37,7 @@ def generate(query: str, rag_text: str, out_file: str) -> str:
     then implants the RAG text before running it through the generation model
     """
     prompt = query.replace("<rag_token>", rag_text)
+    print(f"prompting with '{prompt}'")
     report = run_pixi_generate(prompt=prompt, out_file=out_file) 
     return report.output or ""
 
@@ -44,11 +57,12 @@ if __name__ == "__main__":
     top_3 = top_n(3, scores, chunks)
     top_1 = top_n(1, scores, chunks)
     
-    output_5 = generate(query, top_5, out_file="top_5_test")
-    output_3 = generate(query, top_3, out_file="top_3_test")
-    output_1 = generate(query, top_1, out_file="top_1_test")
+    output_5 = generate(better_prompt, top_5, out_file="top_5_test")
+    output_3 = generate(better_prompt, top_3, out_file="top_3_test")
+    output_1 = generate(better_prompt, top_1, out_file="top_1_test")
 
     # exercise 2 - generate with fixed token budget
 
 
     # exercise 3 - salience test
+
