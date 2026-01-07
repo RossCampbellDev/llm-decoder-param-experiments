@@ -384,3 +384,36 @@ and score the sentences vs the query, and only top sentences go to generator
 - as always, be extra aware of the query and how it can have a significant
 effect on the response
 
+# Fixed token context
+*NOTE: switched back to the test_doc that is about markdown.*
+
+As opposed to using a top-N approach, we try using specific numbers of tokens.
+We tested with 3 different lengths:  512, 1024, 2048.
+
+To achieve this, we couldn't simply stick our chunks in until meeting a
+token limit (eg splitting on spaces).  Instead we had to go through our
+chunks and then use the sentencepiece tokenizer to properly tokenize the chunks
+for gemma3.
+
+for the same prompt that we used for top-n, we ended up getting the same answer
+every time which was not particularly interesting:
+`"Block-level HTML elements are allowed"`
+
+i then changed the query to be a little more open ended:
+`what does markdown allow us to do?`
+
+in the case of 512 and 1024 length, we ended up with a completely unhelpful
+response - repeating our query back to us.
+However:  for 2048 length, we then got a very nice little summary of bullet
+points that listed multiple relevant answers.
+
+this led me to try the same query for top-N.  with 1, 3, or 5 top matches,
+our responses were still pretty useless.  However, I noticed that the context
+was much shorter.
+
+I increased the N number to top 50 chunks to get a more similar context length.
+Interestingly, the response was now much better - it was similar in meaning
+to the fixed length answer, but different in word choice.
+
+This suggests that in the case of the open-ended question, the larger context
+window is actually more helpful as we can get a broader summation-style answer.
