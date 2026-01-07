@@ -31,6 +31,26 @@ def top_n(n: int, scores: List[Tuple[int, float]], chunks: List[Chunk]) -> str:
     top_scores = scores[:n]
     return ' '.join([chunks[idx].txt for idx, _ in top_scores])
 
+
+def get_tokens(n: int, scores: List[Tuple[int, float]], chunks: List[Chunk]) -> str:
+    """
+    returns a concatenated string of 'n' tokens from our hybrid-scored and
+    chunked data
+    """
+    rag_text = ""
+    token_count = 0
+
+    for idx, _ in scores:
+        chunk_tokens = chunks[idx].txt.split(' ')
+        diff = n - token_count
+        if len(chunk_tokens) > diff:
+            rag_text += ' '.join(chunk_tokens[:diff])
+        else:
+            rag_text += ' '.join(chunk_tokens)
+        print(f"diff: {diff}, RT: {rag_text}\n---")
+    return rag_text
+
+
 def generate(query: str, rag_text: str, out_file: str) -> str:
     """
     takes the base query (including a token for where the rag input should go)
@@ -53,16 +73,20 @@ if __name__ == "__main__":
     scores = get_hybrid(query, path)
     chunks = build_chunks(test_data)
 
-    top_5 = top_n(5, scores, chunks)
-    top_3 = top_n(3, scores, chunks)
-    top_1 = top_n(1, scores, chunks)
-    
-    output_5 = generate(better_prompt, top_5, out_file="top_5_test")
-    output_3 = generate(better_prompt, top_3, out_file="top_3_test")
-    output_1 = generate(better_prompt, top_1, out_file="top_1_test")
+    # top_5 = top_n(5, scores, chunks)
+    # top_3 = top_n(3, scores, chunks)
+    # top_1 = top_n(1, scores, chunks)
+
+    # output_5 = generate(better_prompt, top_5, out_file="top_5_test")
+    # output_3 = generate(better_prompt, top_3, out_file="top_3_test")
+    # output_1 = generate(better_prompt, top_1, out_file="top_1_test")
 
     # exercise 2 - generate with fixed token budget
+    fivetwelve = get_tokens(30, scores, chunks)
+    # tentwentyfour = get_tokens(1024, scores, chunks)
 
+    output_1 = generate(better_prompt, fivetwelve, out_file="top_1_test")
+    # output_2 = generate(better_prompt, tentwentyfour, out_file="top_1_test")
 
     # exercise 3 - salience test
 
